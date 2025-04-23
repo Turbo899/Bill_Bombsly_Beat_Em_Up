@@ -1,7 +1,7 @@
 /*****************************************************************************
 // File Name :         BasicEnemyController.cs
 // Author :            Josh Bond
-// Creation Date :     March 31, 2025
+// Creation Date :     April 22, 2025
 //
 // Brief Description : Controls the game's basic enemy that moves towards the player.
 *****************************************************************************/

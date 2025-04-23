@@ -1,7 +1,7 @@
 /*****************************************************************************
 // File Name :         PlayerController.cs
 // Author :            Josh Bond
-// Creation Date :     March 31, 2025
+// Creation Date :     April 22, 2025
 //
 // Brief Description : Controls the character that is controlled by the player.
 *****************************************************************************/
@@ -10,6 +10,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -19,11 +20,17 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private PlayerInput playerInput;
     [SerializeField] private float moveSpeed;
     [SerializeField] private float jumpSpeed;
+    [SerializeField] private float rotateSpeed;
     [SerializeField] private float groundDistance;
     [SerializeField] private float health;
     [SerializeField] private TMP_Text healthText;
+    [SerializeField] private Rigidbody LFist;
+    [SerializeField] private Rigidbody RFist;
+    private InputAction move;
     public InputAction restart;
     public InputAction escape;
+    public InputAction leftPunch;
+    public InputAction rightPunch;
 
     private Rigidbody rb;
     private Vector3 playerMovement;
@@ -42,6 +49,9 @@ public class PlayerController : MonoBehaviour
 
         restart.started += Handle_RestartStarted;
         escape.started += Handle_EscapeStarted;
+
+        leftPunch.started += Handle_LeftPunch;
+        rightPunch.started += Handle_RightPunch;
     }
 
     private void Handle_EscapeStarted(InputAction.CallbackContext context)
@@ -52,6 +62,16 @@ public class PlayerController : MonoBehaviour
     private void Handle_RestartStarted(InputAction.CallbackContext context)
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    private void Handle_LeftPunch(InputAction.CallbackContext context)
+    {
+        //Instantiate(LFist, LFist.position, transform.rotation);
+    }
+
+    private void Handle_RightPunch(InputAction.CallbackContext context)
+    {
+        //Instantiate(RFist, RFist.position, transform.rotation);
     }
 
     /// <summary>
@@ -111,19 +131,33 @@ public class PlayerController : MonoBehaviour
 
         if (collision.gameObject.tag == "Killbox")
         {
-            Destroy(gameObject);
+            health = 0;
         }
     }
-    
+
     // Update is called once per frame
     /// <summary>
     /// Updates the health tracker and the player's position and checks if the player has enough health to continue
     /// </summary>
     void Update()
     {
+        //move = playerMovement.ReadValue<Vector3>();
+
+        Quaternion playerRotation = Quaternion.LookRotation (new Vector3 (playerMovement.x, playerMovement.y,
+        playerMovement.z));
+
+        if (playerMovement.x < 0 || playerMovement.z < 0)
+        {
+        rb.transform.rotation = Quaternion.RotateTowards(rb.transform.rotation, playerRotation, rotateSpeed *
+        Time.deltaTime);
+        }
+
         healthText.text = "Health: " + health;
 
         rb.velocity = new Vector3(playerMovement.x, rb.velocity.y, playerMovement.z);
+        LFist.position = new Vector3(rb.position.x + 0.7f, rb.position.y, rb.position.z);
+        RFist.position = new Vector3(rb.position.x - 0.7f, rb.position.y, rb.position.z);
+
         if (health <= 0)
         {
             Destroy(gameObject);
