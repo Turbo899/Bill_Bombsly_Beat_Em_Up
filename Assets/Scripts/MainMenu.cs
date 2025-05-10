@@ -1,7 +1,7 @@
 /*****************************************************************************
 // File Name :         GameManager.cs
 // Author :            Josh Bond
-// Creation Date :     April 22, 2025
+// Creation Date :     May 10, 2025
 //
 // Brief Description : Controls the game's start/main menu.
 *****************************************************************************/
@@ -13,12 +13,6 @@ using UnityEngine.SceneManagement;
 public class MainMenu : MonoBehaviour
 {
     public GameManager gameManager;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
     /// <summary>
     /// Starts the game
@@ -34,11 +28,5 @@ public class MainMenu : MonoBehaviour
     public void QuitGame()
     {
         Application.Quit();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

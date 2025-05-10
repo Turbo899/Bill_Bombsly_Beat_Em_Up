@@ -1,7 +1,7 @@
 /*****************************************************************************
 // File Name :         GameManager.cs
 // Author :            Josh Bond
-// Creation Date :     April 22, 2025
+// Creation Date :     May 10, 2025
 //
 // Brief Description : Allows the player to progress through or lose the game
 *****************************************************************************/
@@ -20,22 +20,54 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int enemyCount;
     [SerializeField] private int currentScene;
     [SerializeField] private GameObject player;
-
-    // Start is called before the first frame update
-    /// <summary>
-    /// Starts the game at Scene 0 (Main Menu)
-    /// </summary>
-    void Start()
-    {
-        currentScene = 0;
-    }
+    public GameObject RestartButton;
+    public GameObject QuitButton;
 
     /// <summary>
-    /// Reduces the enemyCount by 1 each time an enemy is destroyed
+    /// Reduces the enemyCount by one each time an enemy is destroyed
     /// </summary>
     public void DestroyEnemy()
     {
         enemyCount -= 1;
+    }
+
+    /// <summary>
+    /// Moves the game to the next level when one is completed
+    /// </summary>
+    public void NewScene()
+    {
+        if (enemyCount == 0)
+        {
+            if (currentScene > 0 && currentScene < 4)
+            {
+                currentScene += 1;
+                SceneManager.LoadScene(currentScene);
+            }
+            else
+            {
+                RestartButton.gameObject.SetActive(true);
+                QuitButton.gameObject.SetActive(true);
+                Cursor.visible = true;
+                wlText.text = "Win";
+            }
+        }
+    }
+
+    /// <summary>
+    /// Restarts the level
+    /// </summary>
+    public void Restart()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        Time.timeScale = 1;
+    }
+
+    /// <summary>
+    /// Exits the game
+    /// </summary>
+    public void Quit()
+    {
+        Application.Quit();
     }
 
     // Update is called once per frame
@@ -45,21 +77,9 @@ public class GameManager : MonoBehaviour
     /// </summary>
     void Update()
     {
-        enemiesText.text = "Enemies Remaining: " + enemyCount;
-        
-        if (enemyCount == 0)
-        {
+        NewScene();
 
-            if (currentScene == 0)
-            {
-                currentScene += 1;
-                SceneManager.LoadScene(2);
-            }
-            else
-            {
-                wlText.text = "Win";
-            }
-        }
+        enemiesText.text = "Enemies Remaining: " + enemyCount;
 
         if (player == null)
         {

@@ -1,7 +1,7 @@
 /*****************************************************************************
 // File Name :         PlayerController.cs
 // Author :            Josh Bond
-// Creation Date :     April 22, 2025
+// Creation Date :     May 10, 2025
 //
 // Brief Description : Controls the character that is controlled by the player.
 *****************************************************************************/
@@ -26,18 +26,22 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private TMP_Text healthText;
     [SerializeField] private Rigidbody LFist;
     [SerializeField] private Rigidbody RFist;
+    public GameObject resumeButton;
+    public GameObject restartButton;
+    public GameObject quitButton;
     private InputAction move;
     public InputAction restart;
     public InputAction escape;
+    public InputAction pause;
     public InputAction leftPunch;
     public InputAction rightPunch;
-
+    public GameManager gameManager;
     private Rigidbody rb;
     private Vector3 playerMovement;
 
     // Start is called before the first frame update
     /// <summary>
-    /// Sets the player's Rigidbody and input action map
+    /// Sets the player's Rigidbody and input action map and disables the cursor during gameplay
     /// </summary>
     void Start()
     {
@@ -46,33 +50,75 @@ public class PlayerController : MonoBehaviour
 
         restart = playerInput.currentActionMap.FindAction("Restart");
         escape = playerInput.currentActionMap.FindAction("Escape");
+        pause = playerInput.currentActionMap.FindAction("Pause");
 
         restart.started += Handle_RestartStarted;
         escape.started += Handle_EscapeStarted;
+        pause.started += Handle_PauseStarted;
 
         leftPunch.started += Handle_LeftPunch;
         rightPunch.started += Handle_RightPunch;
+
+        if (SceneManager.GetActiveScene().buildIndex >= 1)
+        {
+            Cursor.visible = false;
+        }
     }
 
+    /// <summary>
+    /// Allows the player to exit out of the game
+    /// </summary>
+    /// <param name="context"></param>
     private void Handle_EscapeStarted(InputAction.CallbackContext context)
     {
-        Application.Quit();
+        gameManager.Quit();
     }
 
+    /// <summary>
+    /// Allows the player to restart the current level
+    /// </summary>
+    /// <param name="context"></param>
     private void Handle_RestartStarted(InputAction.CallbackContext context)
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+       gameManager.Restart();
     }
 
-    private void Handle_LeftPunch(InputAction.CallbackContext context)
+    /// <summary>
+    /// Pauses the game
+    /// </summary>
+    /// <param name="context"></param>
+    private void Handle_PauseStarted(InputAction.CallbackContext context)
     {
-        //Instantiate(LFist, LFist.position, transform.rotation);
+        resumeButton.gameObject.SetActive(true);
+        restartButton.gameObject.SetActive(true);
+        quitButton.gameObject.SetActive(true);
+        Cursor.visible = true;
+        Time.timeScale = 0;
     }
 
-    private void Handle_RightPunch(InputAction.CallbackContext context)
+    /// <summary>
+    /// Starts the game again after a pause
+    /// </summary>
+    public void Unpause()
     {
-        //Instantiate(RFist, RFist.position, transform.rotation);
+        resumeButton.gameObject.SetActive(false);
+        restartButton.gameObject.SetActive(false);
+        quitButton.gameObject.SetActive(false);
+        Cursor.visible = false;
+        Time.timeScale = 1;
     }
+
+    /// <summary>
+    /// Starts the Left Punch action
+    /// </summary>
+    /// <param name="context"></param>
+    private void Handle_LeftPunch(InputAction.CallbackContext context){}
+
+    /// <summary>
+    /// Starts the Right Punch action
+    /// </summary>
+    /// <param name="context"></param>
+    private void Handle_RightPunch(InputAction.CallbackContext context){}
 
     /// <summary>
     /// Moves the player up when the jump key is pressed and the player is on the ground
@@ -141,8 +187,6 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     void Update()
     {
-        //move = playerMovement.ReadValue<Vector3>();
-
         Quaternion playerRotation = Quaternion.LookRotation (new Vector3 (playerMovement.x, playerMovement.y,
         playerMovement.z));
 
@@ -160,6 +204,9 @@ public class PlayerController : MonoBehaviour
 
         if (health <= 0)
         {
+            restartButton.gameObject.SetActive(true);
+            quitButton.gameObject.SetActive(true);
+            Cursor.visible = true;
             Destroy(gameObject);
         }
     }

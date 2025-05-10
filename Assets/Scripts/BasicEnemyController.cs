@@ -1,7 +1,7 @@
 /*****************************************************************************
 // File Name :         BasicEnemyController.cs
 // Author :            Josh Bond
-// Creation Date :     April 22, 2025
+// Creation Date :     May 10, 2025
 //
 // Brief Description : Controls the game's basic enemy that moves towards the player.
 *****************************************************************************/
@@ -41,6 +41,10 @@ public class BasicEnemyController : MonoBehaviour
             {
                 Vector3 Direction = (player.transform.position - transform.position).normalized;
                 rb.MovePosition(rb.position + Direction * moveSpeed * Time.fixedDeltaTime);
+            }
+            else
+            {
+
             }
         }
     }

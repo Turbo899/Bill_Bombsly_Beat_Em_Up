@@ -1,7 +1,7 @@
 /*****************************************************************************
 // File Name :         FistController.cs
 // Author :            Josh Bond
-// Creation Date :     April 22, 2025
+// Creation Date :     May 10, 2025
 //
 // Brief Description : Controls the players fists that are used to attack enemies.
 *****************************************************************************/
@@ -24,21 +24,15 @@ public class FistController : MonoBehaviour
 
     // Start is called before the first frame update
     /// <summary>
-    /// Sets isPunching to false (other things may be used later)
+    /// Sets isPunching to false
     /// </summary>
     void Start()
     {
-        //LFist = GetComponent<Rigidbody>();
-        //RFist = GetComponent<Rigidbody>();
         isPunching = false;
-        //playerInput.currentActionMap.Enable();
-        //gameObject.active = false;
     }
 
-    // Scrapped attack ideas
-
     /// <summary>
-    /// Moves the left fist forward and back
+    /// Moves the fists forward (left) and back
     /// </summary>
     /// <returns></returns>
     public IEnumerator LeftPunch()
@@ -48,17 +42,15 @@ public class FistController : MonoBehaviour
         while (fistTime > 0)
         {
             Debug.Log("Left");
-            //LFist.AddForce(transform.up * -fistSpeed * Time.deltaTime);
             transform.Translate(0, (-Mathf.Sin(transform.position.y)), 0);
             fistTime -= 1;
             yield return new WaitForSeconds(0.01f);
-            //LFist.AddForce(transform.up * fistSpeed * Time.deltaTime);
         }
         isPunching = false;
     }
 
     /// <summary>
-    /// Moves the right fist forward and back
+    /// Moves the fists forward (right) and back
     /// </summary>
     /// <returns></returns>
     public IEnumerator RightPunch()
@@ -68,11 +60,9 @@ public class FistController : MonoBehaviour
         while (fistTime > 0)
         {
             Debug.Log("Right");
-            //RFist.AddForce(transform.up * -fistSpeed * Time.deltaTime);
             transform.Translate(0, (Mathf.Sin(transform.position.y)), 0);
             fistTime -= 1;
             yield return new WaitForSeconds(0.01f);
-            //RFist.AddForce(transform.up * fistSpeed * Time.deltaTime);
         }
         isPunching = false;
     }
@@ -82,7 +72,7 @@ public class FistController : MonoBehaviour
     /// </summary>
     public void OnLeftPunch()
     {
-        fistTime = 100;
+        fistTime = 50;
         StartCoroutine(LeftPunch());
     }
 
@@ -91,7 +81,7 @@ public class FistController : MonoBehaviour
     /// </summary>
     public void OnRightPunch()
     {
-        fistTime = 100;
+        fistTime = 50;
         StartCoroutine(RightPunch());
     }
 
@@ -116,7 +106,7 @@ public class FistController : MonoBehaviour
 
             if (collision.gameObject.tag == "Health")
             {
-                // It should do nothing but instead it destroys the milkshake and doesn't give me any health
+                //do nothing
             }
         }
         else
@@ -126,9 +116,11 @@ public class FistController : MonoBehaviour
     }
 
     // Update is called once per frame
+    /// <summary>
+    /// Keeps the fists on the player
+    /// </summary>
     void Update()
     {
-        //transform.position += transform.up * Time.deltaTime * fistSpeed;
         if (player != null)
         {
             float Distance = Vector3.Distance(transform.position, player.transform.position);
